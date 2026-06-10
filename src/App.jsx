@@ -1,22 +1,27 @@
-// import { useState } from 'react'
-import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import Footer from './components/Footer'
-import ProductCategories from './components/Prod'
-import './App.css'
-import Testimonial from './components/Testimonial'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './components/Home';
+import AdminLayout from './components/admin/AdminLayout';
+import Dashboard from './components/admin/Dashboard';
+import Products from './components/admin/Products';
+import Orders from './components/admin/Orders'; // <-- Import real component file
+import { AdminProvider } from './context/AdminContext';
 
-function App() {
-
+export default function App() {
   return (
-    <>
-      <Navbar />
-      <Hero />
-      <ProductCategories />
-      <Testimonial />
-      <Footer />
-    </>
-  )
-}
+    <BrowserRouter>
+      <AdminProvider>
+        <Routes>
+          {/* Customer Front Storefront */}
+          <Route path="/" element={<Home />} />
 
-export default App
+          {/* Secure Dashboard Core Framework Layout Shell */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="products" element={<Products />} />
+            <Route path="orders" element={<Orders />} /> {/* <-- Connected dynamically */}
+          </Route>
+        </Routes>
+      </AdminProvider>
+    </BrowserRouter>
+  );
+}
