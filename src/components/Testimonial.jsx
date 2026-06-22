@@ -1,45 +1,72 @@
-const Testimonial = () => {
-  return (
-    <section className="max-w-7xl mx-auto px-6 py-16 md:px-12 text-center">
-      <h2 className="text-3xl font-serif text-gray-900 mb-12">What our customers are saying</h2>
-      
-      <div className="flex items-center justify-between gap-4">
-        {/* Left Arrow */}
-        <button className="w-12 h-12 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors shrink-0">
-          ←
-        </button>
+import { useState } from 'react';
 
-        {/* Testimonial Card */}
-        <div className="bg-[#f4f4f6] rounded-3xl p-8 md:p-12 max-w-3xl w-full flex flex-col md:flex-row gap-8 items-center text-left relative">
-          <div className="w-48 h-48 rounded-2xl overflow-hidden shrink-0 bg-gray-200">
-            <img 
-              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&h=400&q=80" 
-              alt="Customer" 
-              className="w-full h-full object-cover grayscale-[20%]"
-            />
-          </div>
-          
-          <div className="flex flex-col justify-between h-48 w-full py-2">
-            <div className="space-y-4">
-              <div className="text-2xl text-gray-800">
-                <span className="inline-block transform rotate-45 text-xl font-light">↑</span>
-              </div>
-              <p className="text-lg font-medium text-gray-900">Customer Review</p>
-            </div>
-            
-            <div>
-              <p className="text-xs font-semibold tracking-wider uppercase text-gray-500">Customer Name</p>
-            </div>
-          </div>
+export default function Testimonial() {
+  const reviews = [
+    {
+      id: 1,
+      name: "Ananya Sharma",
+      role: "Verified Buyer",
+      rating: 5,
+      comment: "Absolutely love the product quality! The delivery was extremely fast, and the customer support team helped me track my package instantly.",
+      date: "June 15, 2026"
+    },
+    {
+      id: 2,
+      name: "Rohan Verma",
+      role: "Tech Enthusiast",
+      rating: 5,
+      comment: "The wireless headphones exceed expectations. Battery life lasts for days, and the sound profile is perfectly balanced for the price point.",
+      date: "June 18, 2026"
+    },
+    {
+      id: 3,
+      name: "Priya Patel",
+      role: "Regular Customer",
+      rating: 4,
+      comment: "Great experience shopping here. The admin dashboard updates inventory levels transparently so I always know what is in stock.",
+      date: "June 20, 2026"
+    }
+  ];
+
+  return (
+    <section className="bg-white border-t border-b border-gray-100 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div className="text-center max-w-xl mx-auto mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Customer Reviews</h2>
+          <p className="text-sm text-gray-500 mt-2">See what our community has to say about their shopping experience.</p>
         </div>
 
-        {/* Right Arrow */}
-        <button className="w-12 h-12 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors shrink-0">
-          →
-        </button>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {reviews.map((review) => (
+            <div 
+              key={review.id} 
+              className="bg-gray-50 border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center gap-1 text-amber-400 mb-4">
+                  {Array.from({ length: review.rating }).map((_, index) => (
+                    <span key={index} className="text-lg">⭐</span>
+                  ))}
+                </div>
+                
+                <p className="text-gray-600 text-sm italic leading-relaxed">
+                  "{review.comment}"
+                </p>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-gray-200/60 flex items-center justify-between">
+                <div>
+                  <h4 className="font-bold text-gray-950 text-sm">{review.name}</h4>
+                  <p className="text-xs text-purple-600 font-medium">{review.role}</p>
+                </div>
+                <span className="text-xs text-gray-400">{review.date}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );
-};
-
-export default Testimonial;
+}
