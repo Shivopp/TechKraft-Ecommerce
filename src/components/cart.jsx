@@ -5,7 +5,6 @@ import Footer from './Footer';
 
 export default function Cart() {
   const { cartItems, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart();
-
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col justify-between font-sans antialiased">
       <div>
