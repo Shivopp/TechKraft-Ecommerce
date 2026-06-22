@@ -1,70 +1,97 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios'; // <-- Import our delivery courier tool
 
 const AdminContext = createContext();
 
 export function AdminProvider({ children }) {
-  // Stats summary engine
   const [stats, setStats] = useState({
     totalRevenue: 142350,
     salesGrowth: "+12%",
     totalOrders: 312,
-    lowStockAlerts: 2,
+    lowStockAlerts: 0, // We will update this dynamically based on real data
   });
-  
 
+  const [products, setProducts] = useState([]); // Start with an empty warehouse list!
+  const [recentOrders, setRecentOrders] = useState([
+    { id: "ORD-9482", customer: "Rahul Sharma", email: "rahul@example.com", items: "2x Alpha Wireless Headphones", total: 5998, status: "Delivered", date: "June 09, 2026" },
+    { id: "ORD-9481", customer: "Priya Patel", email: "priya@example.com", items: "1x Minimalist Smart Watch", total: 4999, status: "Pending", date: "June 10, 2026" },
+  ]);
   const [weeklyRevenue, setWeeklyRevenue] = useState([
     { day: "Mon", value: 65 }, { day: "Tue", value: 45 }, { day: "Wed", value: 85 },
     { day: "Thu", value: 30 }, { day: "Fri", value: 90 }, { day: "Sat", value: 75 }, { day: "Sun", value: 50 },
   ]);
 
-  const [products, setProducts] = useState([
-    { id: 1, name: "Alpha Wireless Headphones", price: 2999, stock: 45, category: "Electronics", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=150" },
-    { id: 2, name: "Minimalist Smart Watch", price: 4999, stock: 4, category: "Wearables", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=150" },
-  ]);
+  // URL of your Express Backend Server
+  const API_URL = 'http://localhost:5000/api/products';
 
-  // Dynamic order database log with added details for our tracking panel
-  const [recentOrders, setRecentOrders] = useState([
-    { id: "ORD-9482", customer: "Rahul Sharma", email: "rahul@example.com", items: "2x Alpha Wireless Headphones", total: 5998, status: "Delivered", date: "June 09, 2026" },
-    { id: "ORD-9481", customer: "Priya Patel", email: "priya@example.com", items: "1x Minimalist Smart Watch", total: 4999, status: "Pending", date: "June 10, 2026" },
-    { id: "ORD-9480", customer: "Amit Singh", email: "amit@example.com", items: "1x Alpha Wireless Headphones", total: 2999, status: "Processing", date: "June 08, 2026" },
-  ]);
-
-  const addProduct = (newProd) => {
-    setProducts((prev) => [...prev, { ...newProd, id: Date.now(), stock: Number(newProd.stock), price: Number(newProd.price) }]);
+  // 1. FETCH OPERATION (Load products from database on startup)
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setProducts(response.data); // Puts the database items into our React state
+    } catch (error) {
+      console.error("Error fetching products from database:", error.message);
+    }
   };
 
-  const deleteProduct = (id) => {
-    setProducts((prev) => prev.filter(p => p.id !== id));
-  };
+  // Run fetchProducts automatically the moment the admin dashboard opens
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-  // 🔥 PLACED HERE: Your new editing operation logic handler 
-  const updateProduct = (id, updatedFields) => {
+  // 2. CREATE OPERATION (Send new product data to backend)
+  const addProduct = async (newProd) => {
+    try {
+      // Axios sends the data over to port 5000/api/products
+      const response = await axios.post(API_URL, {
+        name: newProd.name,
+        price: Number(newProd.price),
+        stock: Number(newProd.stock),
+        category: newProd.category,
+        image: newProd.image
+      });
+
+      // Update frontend screen immediately with the newly saved item from MongoDB
+      setProducts((prev) => [...prev, response.data]);
+    } catch (error) {
+      console.error("Error adding product to database:", error.message);
+      alert("Failed to save product to database.");
+    }
+  };
+  // 4. UPDATE OPERATION (Send updated product fields to backend)
+const updateProduct = async (id, updatedFields) => {
+  try {
+    // Axios sends a PUT request to http://localhost:5000/api/products/:id
+    const response = await axios.put(`${API_URL}/${id}`, {
+      name: updatedFields.name,
+      price: Number(updatedFields.price),
+      stock: Number(updatedFields.stock),
+      category: updatedFields.category,
+      image: updatedFields.image
+    });
+
+    // Update the frontend screen immediately with the new data from MongoDB
     setProducts((prev) =>
-      prev.map((product) =>
-        product.id === id 
-          ? { 
-              ...product, 
-              ...updatedFields, 
-              price: Number(updatedFields.price), 
-              stock: Number(updatedFields.stock) 
-            } 
-          : product
-      )
+      prev.map((product) => (product._id === id ? response.data : product))
     );
-  };
+  } catch (error) {
+    console.error("Error updating product in database:", error.message);
+    alert("Failed to save product updates.");
+  }
+};
 
-  // Action handler to switch status indicators
-  const updateOrderStatus = (orderId, newStatus) => {
-    setRecentOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
+  // 3. DELETE OPERATION (Remove product from database)
+  const deleteProduct = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      setProducts((prev) => prev.filter(p => p._id !== id)); // Note: MongoDB uses _id instead of id!
+    } catch (error) {
+      console.error("Error deleting product:", error.message);
+    }
   };
 
   return (
-    /* 🔥 UPDATED HERE: Added updateProduct reference to the provider context string list below */
-    <AdminContext.Provider value={{ stats, recentOrders, weeklyRevenue, products, addProduct, deleteProduct, updateProduct, updateOrderStatus }}>
+    <AdminContext.Provider value={{ stats, recentOrders, weeklyRevenue, products, addProduct, deleteProduct }}>
       {children}
     </AdminContext.Provider>
   );
