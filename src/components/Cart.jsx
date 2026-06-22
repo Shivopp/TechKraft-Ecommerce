@@ -4,7 +4,23 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 
 export default function Cart() {
-  const { cartItems, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, getCartTotal, clearCart, checkout } = useCart();
+
+  const handleTestCheckout = async () => {
+    if (cartItems.length === 0) {
+      alert("Add some items to your cart first!");
+      return;
+    }
+
+    const testCustomer = {
+      name: "Pratiksha Singh",
+      email: "pratiksha@example.com",
+      address: "MMMUT, Gorakhpur, UP"
+    };
+
+    await checkout(testCustomer);
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col justify-between font-sans antialiased">
       <div>
@@ -97,8 +113,12 @@ export default function Cart() {
                   <span>Total Amount</span>
                   <span>₹{getCartTotal().toLocaleString('en-IN')}</span>
                 </div>
-                <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-semibold text-sm transition shadow-sm shadow-purple-600/10">
-                  Proceed to Checkout
+                
+                <button 
+                  onClick={handleTestCheckout}
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-semibold text-sm transition shadow-sm shadow-purple-600/10"
+                >
+                  Place Test Order 🎉
                 </button>
               </div>
             </div>

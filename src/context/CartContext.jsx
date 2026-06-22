@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 const CartContext = createContext();
 
@@ -61,8 +62,33 @@ export function CartProvider({ children }) {
     return cartItems.reduce((count, item) => count + item.quantity, 0);
   };
 
+  const checkout = async (customerDetails) => {
+    try {
+      await axios.post("https://ecart-backend-yocf.onrender.com/api/orders", {
+        customerName: customerDetails.name,
+        email: customerDetails.email,
+        address: customerDetails.address,
+        items: cartItems.map(item => ({
+          productId: item._id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        totalAmount: getCartTotal()
+      });
+
+      alert("Order placed successfully! 🎉");
+      clearCart();
+      return true;
+    } catch (error) {
+      console.error("Checkout failed:", error.message);
+      alert("Checkout failed. Please try again.");
+      return false;
+    }
+  };
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, getCartTotal, getCartCount }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, getCartTotal, getCartCount, checkout }}>
       {children}
     </CartContext.Provider>
   );
