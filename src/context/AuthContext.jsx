@@ -8,7 +8,12 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem('eshop_token') || null);
   const [loading, setLoading] = useState(true);
 
-  // Sync token properties into Axios default configurations
+  // 1. DYNAMIC ENVIRONMENT URL SWITCHER
+  const IS_PRODUCTION = import.meta.env.PROD;
+  const API_URL = IS_PRODUCTION 
+    ? "https://ecart-backend-yocf.onrender.com/api/auth" 
+    : "http://localhost:5000/api/auth";
+
   useEffect(() => {
     if (token) {
       localStorage.setItem('eshop_token', token);
@@ -20,7 +25,6 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, [token]);
 
-  // Read existing active session context on mount
   useEffect(() => {
     const savedUser = localStorage.getItem('eshop_user');
     if (savedUser) {
@@ -28,11 +32,10 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // 1. REGISTER ACTION (FIXED PAYLOAD PASSING)
+  // 2. REGISTER ACTION (Using Dynamic URL)
   const register = async (name, email, password) => {
     try {
-      // Sending explicit properties matches req.body destructuring exactly
-      const response = await axios.post('http://localhost:5000/api/auth/register', { 
+      const response = await axios.post(`${API_URL}/register`, { 
         name, 
         email, 
         password 
@@ -52,10 +55,10 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // 2. LOGIN ACTION
+  // 3. LOGIN ACTION (Using Dynamic URL)
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', { 
+      const response = await axios.post(`${API_URL}/login`, { 
         email, 
         password 
       });
@@ -73,7 +76,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // 3. LOGOUT ACTION
   const logout = () => {
     setToken(null);
     setUser(null);
@@ -82,11 +84,11 @@ export function AuthProvider({ children }) {
     alert("Logged out successfully. See you soon! 👋");
   };
 
- return (
-  <AuthContext.Provider value={{ user, setUser, token, loading, login, register, logout, isAdmin: user?.role === 'admin' }}>
-    {!loading && children}
-  </AuthContext.Provider>
-);
+  return (
+    <AuthContext.Provider value={{ user, setUser, token, loading, login, register, logout, isAdmin: user?.role === 'admin' }}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 }
 
 export const useAuth = () => useContext(AuthContext);
