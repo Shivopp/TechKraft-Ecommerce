@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Product = require('./models/Product'); // Ensure this path matches your Product model location
+const Product = require('./models/Product'); 
 require('dotenv').config();
 
 const sampleProducts = [

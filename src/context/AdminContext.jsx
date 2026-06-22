@@ -120,6 +120,19 @@ export function AdminProvider({ children }) {
       alert("Failed to update order status.");
     }
   };
+  const deleteOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to permanently delete this order?")) return;
+    
+    try {
+      await axios.delete(`${ORDERS_API_URL}/${orderId}`);
+      // Remove the deleted order from the UI state automatically
+      setRecentOrders((prev) => prev.filter(order => order._id !== orderId));
+      alert("Order deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting order:", error.message);
+      alert("Failed to delete the order.");
+    }
+  };
 
   return (
     <AdminContext.Provider 
@@ -131,7 +144,8 @@ export function AdminProvider({ children }) {
         addProduct, 
         updateProduct, 
         deleteProduct, 
-        updateOrderStatus, 
+        updateOrderStatus,
+        deleteOrder, 
         fetchOrders,
         fetchProducts 
       }}

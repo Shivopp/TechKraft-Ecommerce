@@ -1,7 +1,8 @@
 import { useAdmin } from '../../context/AdminContext';
 
 export default function Orders() {
-  const { recentOrders, updateOrderStatus } = useAdmin();
+  // Destructured deleteOrder from context
+  const { recentOrders, updateOrderStatus, deleteOrder } = useAdmin();
 
   const statusOptions = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
 
@@ -46,7 +47,7 @@ export default function Orders() {
                     <span className="text-xs text-gray-400 block mt-0.5">{order.email}</span>
                   </td>
 
-                  {/* Purchased Items description - FIXED OBJECT RENDER CRASH */}
+                  {/* Purchased Items description */}
                   <td className="px-6 py-4 text-gray-600 max-w-xs">
                     <div className="space-y-1">
                       {(order.items || []).map((item, idx) => (
@@ -79,17 +80,25 @@ export default function Orders() {
                     </span>
                   </td>
 
-                  {/* Quick Dropdown Pipeline Status Switcher */}
-                  <td className="px-6 py-4 text-center">
+                  {/* Quick Dropdown Pipeline Status Switcher & Delete Layout Action */}
+                  <td className="px-6 py-4 text-center space-y-2">
                     <select
                       value={order.status || 'Pending'}
                       onChange={(e) => updateOrderStatus(order._id || order.id, e.target.value)}
-                      className="text-xs font-medium bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 px-2.5 py-1.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/10 focus:border-purple-500 transition cursor-pointer"
+                      className="text-xs font-medium bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 px-2.5 py-1.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/10 focus:border-purple-500 transition cursor-pointer block mx-auto"
                     >
                       {statusOptions.map((opt) => (
                         <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
+
+                    {/* Integrated Order Purge Action */}
+                    <button
+                      onClick={() => deleteOrder(order._id || order.id)}
+                      className="text-xs text-rose-600 hover:text-rose-800 font-semibold transition hover:underline block mx-auto pt-1"
+                    >
+                      🗑️ Delete Order
+                    </button>
                   </td>
                 </tr>
               ))}
