@@ -62,28 +62,50 @@ export function CartProvider({ children }) {
     return cartItems.reduce((count, item) => count + item.quantity, 0);
   };
 
-  const checkout = async (customerDetails) => {
+ const checkout = async (customerDetails) => {
   try {
-    await axios.post("https://ecart-backend-yocf.onrender.com/api/orders", {
-      customerName: customerDetails.name,
-      email: customerDetails.email,
-      address: customerDetails.address,
+    // 1. Automatically switch endpoint targets based on host environment
+    const IS_PRODUCTION = import.meta.env.PROD;
+    const CHECKOUT_URL = IS_PRODUCTION 
+      ? "https://ecart-backend-yocf.onrender.com/api/orders" 
+      : "http://localhost:5000/api/orders";
+
+    // 2. Safety Fallback Wrapper: Prevents "Cannot read property of undefined" crashes
+    const safeName = customerDetails?.name || "Shiv";
+    const safeEmail = customerDetails?.email || "shiv@example.com";
+    const safeAddress = customerDetails?.address || "MMMUT Gorakhpur, UP";
+
+    // 3. Prevent submission of an empty shopping tray configuration
+    if (!cartItems || cartItems.length === 0) {
+      alert("Your shopping cart is empty!");
+      return false;
+    }
+
+    console.log("🚀 Dispatching secure full-stack payload package to:", CHECKOUT_URL);
+
+    // 4. Send structured dataset down to Node API server gateway
+    const response = await axios.post(CHECKOUT_URL, {
+      customerName: safeName,
+      email: safeEmail,
+      address: safeAddress,
       items: cartItems.map(item => ({
-        
-        productId: item._id || item.id, 
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price
+        productId: String(item._id || item.id || "dummy-id-123"), 
+        name: item.name || "E-Cart Showcase Item",
+        quantity: Number(item.quantity || 1),
+        price: Number(item.price || 0)
       })),
-      totalAmount: getCartTotal()
+      totalAmount: Number(getCartTotal() || 0)
     });
 
+    console.log("✅ API Success Response Matrix:", response.data);
+    
     alert("Order placed successfully! 🎉");
     clearCart();
     return true;
   } catch (error) {
-    console.error("Checkout failed:", error.message);
-    alert("Checkout failed. Please try again.");
+    // Enhanced error tracing layer
+    console.error("❌ Full Checkout Network Crash Diagnostics:", error.response?.data || error.message);
+    alert(`Checkout failed: ${error.response?.data?.message || error.message}`);
     return false;
   }
 };

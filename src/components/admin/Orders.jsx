@@ -28,28 +28,38 @@ export default function Orders() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 text-sm text-gray-700">
-              {recentOrders.map((order) => (
-                <tr key={order.id} className="hover:bg-gray-50/30 transition-colors">
+              {(recentOrders || []).map((order) => (
+                <tr key={order._id || order.id} className="hover:bg-gray-50/30 transition-colors">
                   {/* ID & Date Frame */}
                   <td className="px-6 py-4">
-                    <span className="font-bold text-purple-600 block">{order.id}</span>
-                    <span className="text-xs text-gray-400 block mt-0.5">{order.date}</span>
+                    <span className="font-bold text-purple-600 block text-xs truncate max-w-[120px]">
+                      {order._id || order.id}
+                    </span>
+                    <span className="text-xs text-gray-400 block mt-0.5">
+                      {order.date ? new Date(order.date).toLocaleDateString() : 'Recent'}
+                    </span>
                   </td>
 
                   {/* Customer Info profile */}
                   <td className="px-6 py-4">
-                    <span className="font-semibold text-gray-950 block">{order.customer}</span>
+                    <span className="font-semibold text-gray-950 block">{order.customerName || 'N/A'}</span>
                     <span className="text-xs text-gray-400 block mt-0.5">{order.email}</span>
                   </td>
 
-                  {/* Purchased Items description */}
-                  <td className="px-6 py-4 text-gray-600 max-w-xs truncate">
-                    {order.items}
+                  {/* Purchased Items description - FIXED OBJECT RENDER CRASH */}
+                  <td className="px-6 py-4 text-gray-600 max-w-xs">
+                    <div className="space-y-1">
+                      {(order.items || []).map((item, idx) => (
+                        <div key={item._id || idx} className="text-xs font-medium text-gray-600">
+                          📦 {item.name || "Product"} <span className="text-purple-600 font-bold">x{item.quantity}</span>
+                        </div>
+                      ))}
+                    </div>
                   </td>
 
                   {/* Price breakdown */}
                   <td className="px-6 py-4 font-bold text-gray-950">
-                    ₹{order.total.toLocaleString('en-IN')}
+                    ₹{(order.totalAmount || 0).toLocaleString('en-IN')}
                   </td>
 
                   {/* Dynamic Status Badges */}
@@ -65,15 +75,15 @@ export default function Orders() {
                         order.status === 'Pending' ? 'bg-amber-500' :
                         order.status === 'Cancelled' ? 'bg-rose-500' : 'bg-blue-500'
                       }`} />
-                      {order.status}
+                      {order.status || 'Pending'}
                     </span>
                   </td>
 
                   {/* Quick Dropdown Pipeline Status Switcher */}
                   <td className="px-6 py-4 text-center">
                     <select
-                      value={order.status}
-                      onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                      value={order.status || 'Pending'}
+                      onChange={(e) => updateOrderStatus(order._id || order.id, e.target.value)}
                       className="text-xs font-medium bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 px-2.5 py-1.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/10 focus:border-purple-500 transition cursor-pointer"
                     >
                       {statusOptions.map((opt) => (

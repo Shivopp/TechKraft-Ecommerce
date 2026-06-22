@@ -13,8 +13,8 @@ export default function Cart() {
     }
 
     const testCustomer = {
-      name: "Pratiksha Singh",
-      email: "pratiksha@example.com",
+      name: "Shiv",
+      email: "shiv@example.com",
       address: "MMMUT, Gorakhpur, UP"
     };
 

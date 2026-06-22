@@ -19,9 +19,22 @@ export function AdminProvider({ children }) {
     { day: "Thu", value: 30 }, { day: "Fri", value: 90 }, { day: "Sat", value: 75 }, { day: "Sun", value: 50 },
   ]);
 
-  const API_URL = "https://ecart-backend-yocf.onrender.com/api/products";
-  const ORDERS_API_URL = "https://ecart-backend-yocf.onrender.com/api/orders";
+  // ==========================================
+  // CONFIGURATION: ENVIRONMENT-AWARE API URLS
+  // ==========================================
+  const IS_PRODUCTION = import.meta.env.PROD;
 
+  const API_URL = IS_PRODUCTION 
+    ? "https://ecart-backend-yocf.onrender.com/api/products" 
+    : "http://localhost:5000/api/products";
+
+  const ORDERS_API_URL = IS_PRODUCTION 
+    ? "https://ecart-backend-yocf.onrender.com/api/orders" 
+    : "http://localhost:5000/api/orders";
+
+  // ==========================================
+  // 1. READ OPERATIONS (Fetch Products & Orders)
+  // ==========================================
   const fetchProducts = async () => {
     try {
       const response = await axios.get(API_URL);
@@ -36,15 +49,19 @@ export function AdminProvider({ children }) {
       const response = await axios.get(ORDERS_API_URL);
       setRecentOrders(response.data);
     } catch (error) {
-      console.error("Error fetching orders:", error.message);
+      console.error("Error fetching orders from database:", error.message);
     }
   };
 
+  // Run automatically when the context mounts
   useEffect(() => {
     fetchProducts();
     fetchOrders();
   }, []);
 
+  // ==========================================
+  // 2. PRODUCT CRUD OPERATIONS
+  // ==========================================
   const addProduct = async (newProd) => {
     try {
       const response = await axios.post(API_URL, {
@@ -85,9 +102,13 @@ export function AdminProvider({ children }) {
       setProducts((prev) => prev.filter(p => p._id !== id));
     } catch (error) {
       console.error("Error deleting product:", error.message);
+      alert("Failed to delete product.");
     }
   };
 
+  // ==========================================
+  // 3. ORDER MANAGEMENT OPERATIONS
+  // ==========================================
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       const response = await axios.put(`${ORDERS_API_URL}/${orderId}`, { status: newStatus });
@@ -96,11 +117,25 @@ export function AdminProvider({ children }) {
       );
     } catch (error) {
       console.error("Error updating order status:", error.message);
+      alert("Failed to update order status.");
     }
   };
 
   return (
-    <AdminContext.Provider value={{ stats, recentOrders, weeklyRevenue, products, addProduct, updateProduct, deleteProduct, updateOrderStatus, fetchOrders }}>
+    <AdminContext.Provider 
+      value={{ 
+        stats, 
+        recentOrders, 
+        weeklyRevenue, 
+        products, 
+        addProduct, 
+        updateProduct, 
+        deleteProduct, 
+        updateOrderStatus, 
+        fetchOrders,
+        fetchProducts 
+      }}
+    >
       {children}
     </AdminContext.Provider>
   );
