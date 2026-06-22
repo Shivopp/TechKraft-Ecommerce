@@ -5,6 +5,7 @@ import Testimonial from './Testimonial';
 import Footer from './Footer';
 import { useCart } from '../context/CartContext';
 
+
 export default function Home() {
   const { products } = useAdmin();
   const { addToCart } = useCart();

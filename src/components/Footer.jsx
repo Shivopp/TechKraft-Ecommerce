@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 
 const Footer = () => {
   return (
@@ -40,6 +42,10 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-gray-800/50 text-[10px] tracking-wider text-gray-500 uppercase">
         © TechKart 2026
       </div>
+    
+<Link to="/admin-login" className="text-xs text-gray-400 hover:text-rose-500 transition hover:underline block mt-4">
+  Control Portal Login 🔒
+</Link>
     </footer>
   );
 };

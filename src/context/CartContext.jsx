@@ -1,9 +1,11 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from './AuthContext'; // <-- 1. Import your useAuth hook
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
+  const { user } = useAuth(); // <-- 2. Extract the live authenticated user state
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem('eshop_cart');
     return savedCart ? JSON.parse(savedCart) : [];
@@ -62,53 +64,59 @@ export function CartProvider({ children }) {
     return cartItems.reduce((count, item) => count + item.quantity, 0);
   };
 
- const checkout = async (customerDetails) => {
-  try {
-    // 1. Automatically switch endpoint targets based on host environment
-    const IS_PRODUCTION = import.meta.env.PROD;
-    const CHECKOUT_URL = IS_PRODUCTION 
-      ? "https://ecart-backend-yocf.onrender.com/api/orders" 
-      : "http://localhost:5000/api/orders";
-
-    // 2. Safety Fallback Wrapper: Prevents "Cannot read property of undefined" crashes
-    const safeName = customerDetails?.name || "Shiv";
-    const safeEmail = customerDetails?.email || "shiv@example.com";
-    const safeAddress = customerDetails?.address || "MMMUT Gorakhpur, UP";
-
-    // 3. Prevent submission of an empty shopping tray configuration
-    if (!cartItems || cartItems.length === 0) {
-      alert("Your shopping cart is empty!");
+  const checkout = async (customerDetails) => {
+    // 3. Block unauthenticated guest checkouts dynamically
+    if (!user) {
+      alert("Please Sign In to your account before placing an order! 🛒");
       return false;
     }
 
-    console.log("🚀 Dispatching secure full-stack payload package to:", CHECKOUT_URL);
+    try {
+      // Automatically switch endpoint targets based on host environment
+      const IS_PRODUCTION = import.meta.env.PROD;
+      const CHECKOUT_URL = IS_PRODUCTION 
+        ? "https://ecart-backend-yocf.onrender.com/api/orders" 
+        : "http://localhost:5000/api/orders";
 
-    // 4. Send structured dataset down to Node API server gateway
-    const response = await axios.post(CHECKOUT_URL, {
-      customerName: safeName,
-      email: safeEmail,
-      address: safeAddress,
-      items: cartItems.map(item => ({
-        productId: String(item._id || item.id || "dummy-id-123"), 
-        name: item.name || "E-Cart Showcase Item",
-        quantity: Number(item.quantity || 1),
-        price: Number(item.price || 0)
-      })),
-      totalAmount: Number(getCartTotal() || 0)
-    });
+      // 4. Bind parameters directly to authenticated user profile attributes
+      const safeName = user.name; 
+      const safeEmail = user.email;
+      const safeAddress = customerDetails?.address || "MMMUT Gorakhpur, UP";
 
-    console.log("✅ API Success Response Matrix:", response.data);
-    
-    alert("Order placed successfully! 🎉");
-    clearCart();
-    return true;
-  } catch (error) {
-    // Enhanced error tracing layer
-    console.error("❌ Full Checkout Network Crash Diagnostics:", error.response?.data || error.message);
-    alert(`Checkout failed: ${error.response?.data?.message || error.message}`);
-    return false;
-  }
-};
+      // Prevent submission of an empty shopping tray configuration
+      if (!cartItems || cartItems.length === 0) {
+        alert("Your shopping cart is empty!");
+        return false;
+      }
+
+      console.log("🚀 Dispatching secure full-stack payload package to:", CHECKOUT_URL);
+
+      // Send structured dataset down to Node API server gateway
+      const response = await axios.post(CHECKOUT_URL, {
+        customerName: safeName,
+        email: safeEmail,
+        address: safeAddress,
+        items: cartItems.map(item => ({
+          productId: String(item._id || item.id || "dummy-id-123"), 
+          name: item.name || "E-Cart Showcase Item",
+          quantity: Number(item.quantity || 1),
+          price: Number(item.price || 0)
+        })),
+        totalAmount: Number(getCartTotal() || 0)
+      });
+
+      console.log("✅ API Success Response Matrix:", response.data);
+      
+      alert(`Order placed successfully for ${user.name}! 🎉`);
+      clearCart();
+      return true;
+    } catch (error) {
+      // Enhanced error tracing layer
+      console.error("❌ Full Checkout Network Crash Diagnostics:", error.response?.data || error.message);
+      alert(`Checkout failed: ${error.response?.data?.message || error.message}`);
+      return false;
+    }
+  };
 
   return (
     <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, getCartTotal, getCartCount, checkout }}>
