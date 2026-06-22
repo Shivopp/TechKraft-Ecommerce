@@ -63,29 +63,30 @@ export function CartProvider({ children }) {
   };
 
   const checkout = async (customerDetails) => {
-    try {
-      await axios.post("https://ecart-backend-yocf.onrender.com/api/orders", {
-        customerName: customerDetails.name,
-        email: customerDetails.email,
-        address: customerDetails.address,
-        items: cartItems.map(item => ({
-          productId: item._id,
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price
-        })),
-        totalAmount: getCartTotal()
-      });
+  try {
+    await axios.post("https://ecart-backend-yocf.onrender.com/api/orders", {
+      customerName: customerDetails.name,
+      email: customerDetails.email,
+      address: customerDetails.address,
+      items: cartItems.map(item => ({
+        
+        productId: item._id || item.id, 
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      totalAmount: getCartTotal()
+    });
 
-      alert("Order placed successfully! 🎉");
-      clearCart();
-      return true;
-    } catch (error) {
-      console.error("Checkout failed:", error.message);
-      alert("Checkout failed. Please try again.");
-      return false;
-    }
-  };
+    alert("Order placed successfully! 🎉");
+    clearCart();
+    return true;
+  } catch (error) {
+    console.error("Checkout failed:", error.message);
+    alert("Checkout failed. Please try again.");
+    return false;
+  }
+};
 
   return (
     <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, getCartTotal, getCartCount, checkout }}>
