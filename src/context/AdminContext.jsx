@@ -22,7 +22,7 @@ export function AdminProvider({ children }) {
   ]);
 
   // URL of your Express Backend Server
-  const API_URL = 'http://localhost:5000/api/products';
+  const API_URL = "https://ecart-backend-yocf.onrender.com/api/products";
 
   // 1. FETCH OPERATION (Load products from database on startup)
   const fetchProducts = async () => {
