@@ -4,6 +4,9 @@ import axios from 'axios';
 const AdminContext = createContext();
 
 export function AdminProvider({ children }) {
+  // Added a centralized loading state initialized to true
+  const [loading, setLoading] = useState(true);
+
   const [stats, setStats] = useState({
     totalRevenue: 142350,
     salesGrowth: "+12%",
@@ -53,10 +56,16 @@ export function AdminProvider({ children }) {
     }
   };
 
-  // Run automatically when the context mounts
+  // Run automatically when the context mounts and clear loading when finished
   useEffect(() => {
-    fetchProducts();
-    fetchOrders();
+    const initializeData = async () => {
+      setLoading(true); // Start layout skeletons
+      // Promise.all Settled keeps things moving even if one network route fails temporarily
+      await Promise.allSettled([fetchProducts(), fetchOrders()]);
+      setLoading(false); // Turn off layout skeletons safely
+    };
+
+    initializeData();
   }, []);
 
   // ==========================================
@@ -120,12 +129,12 @@ export function AdminProvider({ children }) {
       alert("Failed to update order status.");
     }
   };
+
   const deleteOrder = async (orderId) => {
     if (!window.confirm("Are you sure you want to permanently delete this order?")) return;
     
     try {
       await axios.delete(`${ORDERS_API_URL}/${orderId}`);
-      // Remove the deleted order from the UI state automatically
       setRecentOrders((prev) => prev.filter(order => order._id !== orderId));
       alert("Order deleted successfully!");
     } catch (error) {
@@ -137,6 +146,7 @@ export function AdminProvider({ children }) {
   return (
     <AdminContext.Provider 
       value={{ 
+        loading, // Pass loading down so your Home grid switches seamlessly
         stats, 
         recentOrders, 
         weeklyRevenue, 

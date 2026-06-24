@@ -3,92 +3,159 @@ const Product = require('./models/Product');
 require('dotenv').config();
 
 const sampleProducts = [
-  {
-    name: "iPhone 15 Pro",
-    price: 129900,
-    stock: 15,
-    category: "Phones",
-    image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    name: "Samsung Galaxy S24 Ultra",
-    price: 119999,
-    stock: 12,
-    category: "Phones",
-    image: "https://images.unsplash.com/photo-1707148560370-13dfba9557b4?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    name: "OnePlus 12",
-    price: 64999,
-    stock: 20,
-    category: "Phones",
-    image: "https://images.unsplash.com/photo-1715064506822-bc5d944e8c18?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    name: "Sony WH-1000XM5 Headphones",
-    price: 29990,
-    stock: 25,
-    category: "Headphones",
-    image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    name: "Apple AirPods Pro (2nd Gen)",
-    price: 24900,
-    stock: 40,
-    category: "Headphones",
-    image: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    name: "MacBook Pro M3 (14-inch)",
-    price: 169900,
-    stock: 8,
-    category: "Laptops",
-    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    name: "ASUS ROG Zephyrus G14",
-    price: 144990,
-    stock: 10,
-    category: "Laptops",
-    image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    name: "Dell XPS 13",
-    price: 114990,
-    stock: 7,
-    category: "Laptops",
-    image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    name: "Logitech G502 Hero Mouse",
-    price: 4495,
-    stock: 50,
-    category: "Accessories",
-    image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    name: "Keychron K2 Mechanical Keyboard",
-    price: 7499,
-    stock: 30,
-    category: "Accessories",
-    image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?q=80&w=600&auto=format&fit=crop"
-  }
+ {
+  name: "iPad Air M2",
+  price: 59999,
+  stock: 18,
+  category: "Tablets",
+  image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0"
+},
+{
+  name: "Samsung Galaxy Tab S9",
+  price: 72999,
+  stock: 14,
+  category: "Tablets",
+  image: "https://images.unsplash.com/photo-1585790050230-5dd28404ccb9"
+},
+{
+  name: "Apple Watch Series 9",
+  price: 41900,
+  stock: 25,
+  category: "Smartwatches",
+  image: "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d"
+},
+{
+  name: "Samsung Galaxy Watch 6",
+  price: 29999,
+  stock: 22,
+  category: "Smartwatches",
+  image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30"
+},
+{
+  name: "Nothing Phone 2",
+  price: 44999,
+  stock: 16,
+  category: "Phones",
+  image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9"
+},
+{
+  name: "Google Pixel 8 Pro",
+  price: 106999,
+  stock: 10,
+  category: "Phones",
+  image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97"
+},
+{
+  name: "Lenovo Legion 5 Pro",
+  price: 139999,
+  stock: 8,
+  category: "Laptops",
+  image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853"
+},
+{
+  name: "HP Spectre x360",
+  price: 124999,
+  stock: 9,
+  category: "Laptops",
+  image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97"
+},
+{
+  name: "Acer Predator Helios 16",
+  price: 154999,
+  stock: 6,
+  category: "Laptops",
+  image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed"
+},
+{
+  name: "JBL Flip 6 Speaker",
+  price: 9999,
+  stock: 35,
+  category: "Speakers",
+  image: "https://images.unsplash.com/photo-1589003077984-894e133dabab"
+},
+{
+  name: "Sony SRS-XB43 Speaker",
+  price: 15999,
+  stock: 20,
+  category: "Speakers",
+  image: "https://images.unsplash.com/photo-1545454675-3531b543be5d"
+},
+{
+  name: "Amazon Echo Dot (5th Gen)",
+  price: 5499,
+  stock: 40,
+  category: "Smart Home",
+  image: "https://images.unsplash.com/photo-1543512214-318c7553f230"
+},
+{
+  name: "Google Nest Mini",
+  price: 4499,
+  stock: 32,
+  category: "Smart Home",
+  image: "https://images.unsplash.com/photo-1512446733611-9099a758e5b7"
+},
+{
+  name: "Anker 20000mAh Power Bank",
+  price: 3499,
+  stock: 60,
+  category: "Accessories",
+  image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5"
+},
+{
+  name: "Samsung T7 Portable SSD 1TB",
+  price: 8499,
+  stock: 24,
+  category: "Storage",
+  image: "https://images.unsplash.com/photo-1591488320449-011701bb6704"
+},
+{
+  name: "SanDisk Extreme 1TB SSD",
+  price: 7999,
+  stock: 18,
+  category: "Storage",
+  image: "https://images.unsplash.com/photo-1597852074816-d933c7d2b988"
+},
+{
+  name: "Canon EOS R50 Camera",
+  price: 67999,
+  stock: 7,
+  category: "Cameras",
+  image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32"
+},
+{
+  name: "GoPro HERO12 Black",
+  price: 45999,
+  stock: 11,
+  category: "Cameras",
+  image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f"
+},
+{
+  name: "Xbox Series X",
+  price: 54999,
+  stock: 13,
+  category: "Gaming",
+  image: "https://images.unsplash.com/photo-1621259182978-fbf93132d53d"
+},
+{
+  name: "PlayStation 5 Slim",
+  price: 54990,
+  stock: 15,
+  category: "Gaming",
+  image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db"
+}
 ];
 
 const seedDB = async () => {
   try {
-    // Connect to database using your .env URI variable
+    
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to database for seeding...");
 
-    // Optional: Uncomment the next line if you want to clear out old testing products first
-    // await Product.deleteMany({}); 
-
-    // Insert the dataset payload array
+    
     await Product.insertMany(sampleProducts);
     console.log("🚀 Success: 10 real-world products added with images!");
     
-    // Disconnect safely
+    
     mongoose.connection.close();
     process.exit();
   } catch (error) {
