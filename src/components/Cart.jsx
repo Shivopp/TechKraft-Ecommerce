@@ -1,24 +1,19 @@
 import { useCart } from '../context/CartContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
 export default function Cart() {
-  const { cartItems, updateQuantity, removeFromCart, getCartTotal, clearCart, checkout } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart();
+  const navigate = useNavigate();
 
-  const handleTestCheckout = async () => {
+  const handleProceedToCheckout = () => {
     if (cartItems.length === 0) {
       alert("Add some items to your cart first!");
       return;
     }
-
-    const testCustomer = {
-      name: "Shiv",
-      email: "shiv@example.com",
-      address: "MMMUT, Gorakhpur, UP"
-    };
-
-    await checkout(testCustomer);
+    // Redirects user to the checkout route
+    navigate('/checkout');
   };
 
   return (
@@ -115,10 +110,10 @@ export default function Cart() {
                 </div>
                 
                 <button 
-                  onClick={handleTestCheckout}
+                  onClick={handleProceedToCheckout}
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-xl font-semibold text-sm transition shadow-sm shadow-purple-600/10"
                 >
-                  Place Test Order 🎉
+                  Proceed to Checkout ➡️
                 </button>
               </div>
             </div>
