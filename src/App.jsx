@@ -2,20 +2,21 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/home';
 import ProductsPage from './components/ProductsPage';
 import Cart from './components/Cart';
-import Login from './components/Login'; 
+import Login from './components/Login';
 import AdminLogin from './components/AdminLogin'; // Cleaned up import reference
 import AdminLayout from './components/admin/AdminLayout';
 import Dashboard from './components/admin/Dashboard';
 import Products from './components/admin/Products';
-import Orders from './components/admin/Orders'; 
+import Orders from './components/admin/Orders';
 import { AdminProvider } from './context/AdminContext';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import Checkout  from './components/Checkout';
 
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider> 
+      <AuthProvider>
         <AdminProvider>
           <CartProvider>
             <Routes>
@@ -23,18 +24,19 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<ProductsPage />} />
               <Route path="/cart" element={<Cart />} />
-              <Route path="/login" element={<Login />} /> 
-              
+              <Route path="/login" element={<Login />} />
+              <Route path="/checkout" element={<Checkout />} />
+
               {/* Secret independent route for your specific Admin credentials */}
-              <Route path="/admin-login" element={<AdminLogin />} /> 
+              <Route path="/admin-login" element={<AdminLogin />} />
 
               {/* ================= PROTECTED NESTED ADMIN ROUTES ================= */}
               <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<Dashboard />} />          
-                <Route path="products" element={<Products />} />  
-                <Route path="orders" element={<Orders />} />    
+                <Route index element={<Dashboard />} />
+                <Route path="products" element={<Products />} />
+                <Route path="orders" element={<Orders />} />
               </Route>
-              
+
             </Routes>
           </CartProvider>
         </AdminProvider>
