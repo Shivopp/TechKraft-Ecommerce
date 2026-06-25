@@ -13,7 +13,7 @@ export default function Sidebar() {
       <div>
         <div className="h-16 flex items-center px-6 border-b border-slate-800">
           <span className="text-lg font-bold text-white tracking-wider flex items-center gap-2">
-            <span>⚡</span> E-Shop Admin
+            <span>⚡</span> TechKraft Admin
           </span>
         </div>
         

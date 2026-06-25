@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './components/home';
+import ProductsPage from './components/ProductsPage';
 import Cart from './components/Cart';
 import Login from './components/Login'; 
 import AdminLogin from './components/AdminLogin'; // Cleaned up import reference
@@ -20,6 +21,7 @@ export default function App() {
             <Routes>
               {/* ================= PUBLIC INDEPENDENT ROUTES ================= */}
               <Route path="/" element={<Home />} />
+              <Route path="/products" element={<ProductsPage />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/login" element={<Login />} /> 
               
