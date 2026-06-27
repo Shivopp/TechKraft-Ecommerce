@@ -150,10 +150,15 @@ function HeroSlideshow({ products, addToCart }) {
 export default function Home() {
   const { products } = useAdmin();
   const { addToCart } = useCart();
+  const [search, setSearch] = useState("");
+
+  const filteredProducts = products.filter((product) =>
+  product.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="bg-gray-50 min-h-screen font-sans antialiased">
-      <Navbar />
+      <Navbar search={search} setSearch={setSearch} />
 
       {/* Hero Slideshow */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
@@ -190,19 +195,28 @@ export default function Home() {
       {/* Product Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full md:w-96 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
           <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Featured Products</h2>
           <p className="text-sm text-gray-500 mt-1">Explore our latest arrivals fetched live from our storage vault.</p>
         </div>
 
-        {products.length === 0 ? (
+        {filteredProducts.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
             <span className="text-4xl">📦</span>
-            <h3 className="text-lg font-semibold text-gray-900 mt-4">No Products Available</h3>
-            <p className="text-sm text-gray-400 mt-1">Head over to the Admin Panel to register your first stock item!</p>
+            <h3 className="text-lg font-semibold text-gray-900 mt-4">No Products Found</h3>
+            <p className="text-sm text-gray-400 mt-1">Try searching with another keyword</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <div
                 key={product._id}
                 className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between"

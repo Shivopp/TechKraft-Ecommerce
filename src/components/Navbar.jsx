@@ -1,11 +1,22 @@
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useNavigate, Link } from 'react-router-dom';
 
-export default function Navbar() {
+export default function Navbar({ search, setSearch }) {
   const { user, logout } = useAuth();
   const { cartItems } = useCart(); // Assuming your cart uses cartItems array state
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/?search=${searchQuery}`); 
+    } else {
+      navigate('/');
+    }
+  };
 
   // Safely calculate total item quantity in the cart badge indicator
   const cartBadgeCount = (cartItems || []).reduce((acc, item) => acc + item.quantity, 0);
@@ -21,6 +32,13 @@ export default function Navbar() {
 
         {/* Global Navigation Frame */}
         <nav className="flex items-center gap-6">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search || ''} 
+            onChange={(e) => setSearch(e.target.value)} 
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
           <Link to="/" className="text-sm font-medium text-gray-600 hover:text-purple-600 transition">
             Home
           </Link>
