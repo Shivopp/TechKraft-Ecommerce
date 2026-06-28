@@ -64,6 +64,7 @@ export function CartProvider({ children }) {
     return cartItems.reduce((count, item) => count + item.quantity, 0);
   };
 
+  // Fixed signature to accept custom form attributes from the UI form state
   const checkout = async (customerDetails) => {
     // 3. Block unauthenticated guest checkouts dynamically
     if (!user) {
@@ -82,6 +83,9 @@ export function CartProvider({ children }) {
       const safeName = user.name; 
       const safeEmail = user.email;
       const safeAddress = customerDetails?.address || "MMMUT Gorakhpur, UP";
+      
+      // ✅ Capture dynamic payment strategy selection from the checkout form state
+      const safePaymentMethod = customerDetails?.paymentMethod || "Cash on Delivery";
 
       // Prevent submission of an empty shopping tray configuration
       if (!cartItems || cartItems.length === 0) {
@@ -96,6 +100,7 @@ export function CartProvider({ children }) {
         customerName: safeName,
         email: safeEmail,
         address: safeAddress,
+        paymentMethod: safePaymentMethod, // ✅ FIXED: Now properly shipping to backend
         items: cartItems.map(item => ({
           productId: String(item._id || item.id || "dummy-id-123"), 
           name: item.name || "E-Cart Showcase Item",

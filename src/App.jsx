@@ -3,6 +3,7 @@ import Home from './components/home';
 import ProductsPage from './components/ProductsPage';
 import Cart from './components/Cart';
 import Login from './components/Login'; 
+import Checkout from './components/Checkout';
 import AdminLogin from './components/AdminLogin'; // Cleaned up import reference
 import AdminLayout from './components/admin/AdminLayout';
 import Dashboard from './components/admin/Dashboard';
@@ -23,7 +24,9 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<ProductsPage />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
               <Route path="/login" element={<Login />} /> 
+              
               
               {/* Secret independent route for your specific Admin credentials */}
               <Route path="/admin-login" element={<AdminLogin />} /> 

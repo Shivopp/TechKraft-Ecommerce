@@ -4,8 +4,16 @@ const Order = require('../models/Order');
 
 router.post('/', async (req, res) => {
   try {
-    const { customerName, email, address, items, totalAmount } = req.body;
-    const newOrder = new Order({ customerName, email, address, items, totalAmount });
+    const { customerName, email, phone, address, paymentMethod, items, totalAmount } = req.body;
+    const newOrder = new Order({
+      customerName,
+      email,
+      phone: phone || '',
+      address,
+      paymentMethod: paymentMethod || 'Not specified',
+      items,
+      totalAmount
+    });
     const savedOrder = await newOrder.save();
     res.status(201).json(savedOrder);
   } catch (error) {
@@ -35,7 +43,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE an order by ID
 router.delete('/:id', async (req, res) => {
   try {
     const deletedOrder = await Order.findByIdAndDelete(req.params.id);
