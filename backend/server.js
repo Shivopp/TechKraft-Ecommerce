@@ -2,13 +2,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+const axios = require('axios');
 
 // 1. Import all route middleware controllers
 const orderRoutes = require('./routes/orderRoutes');
 const productRoutes = require('./routes/productRoutes');
-const authRoutes = require('./routes/authRoutes'); // <-- Added this to handle login/register
+const authRoutes = require('./routes/authRoutes'); 
 
 const app = express();
+
+app.get('/ping', (req, res) => {
+  res.status(200).send('Server is alive');
+});
 
 // 2. Global Middlewares
 app.use(cors());
@@ -17,7 +22,7 @@ app.use(express.json()); // Parses incoming JSON payloads
 // 3. Mount Routes API Endpoints
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/auth', authRoutes); // <-- Added this: routing /api/auth/register and /api/auth/login
+app.use('/api/auth', authRoutes); 
 
 // 4. Test Root Route Endpoint
 app.get('/', (req, res) => {
@@ -39,3 +44,11 @@ mongoose.connect(dbURI)
   .catch((err) => {
     console.error("❌ Database Connection Error: ", err.message);
   });
+
+
+setInterval(() => {
+ 
+  axios.get('https://ecart-backend-yocf.onrender.com/ping') 
+    .then(() => console.log('Self-ping successful: Server kept awake'))
+    .catch((err) => console.error('Self-ping failed:', err.message));
+}, 12 * 60 * 1000); 
