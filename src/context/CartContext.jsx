@@ -79,31 +79,26 @@ export function CartProvider({ children }) {
         ? "https://ecart-backend-yocf.onrender.com/api/orders" 
         : "http://localhost:5000/api/orders";
 
-      // 4. Bind parameters directly to authenticated user profile attributes
-      const safeName = user.name; 
+      const safeName = customerDetails?.fullName || user.name;
       const safeEmail = user.email;
-      const safeAddress = customerDetails?.address || "MMMUT Gorakhpur, UP";
-      
-      // ✅ Capture dynamic payment strategy selection from the checkout form state
-      const safePaymentMethod = customerDetails?.paymentMethod || "Cash on Delivery";
+      const safeAddress = customerDetails?.address || "Address not provided";
+      const safePaymentMethod = customerDetails?.paymentMethod || "Not specified";
+      const safePhone = customerDetails?.phone || "";
 
-      // Prevent submission of an empty shopping tray configuration
       if (!cartItems || cartItems.length === 0) {
         alert("Your shopping cart is empty!");
         return false;
       }
 
-      console.log("🚀 Dispatching secure full-stack payload package to:", CHECKOUT_URL);
-
-      // Send structured dataset down to Node API server gateway
       const response = await axios.post(CHECKOUT_URL, {
         customerName: safeName,
         email: safeEmail,
         address: safeAddress,
-        paymentMethod: safePaymentMethod, // ✅ FIXED: Now properly shipping to backend
+        paymentMethod: safePaymentMethod,
+        phone: safePhone,
         items: cartItems.map(item => ({
-          productId: String(item._id || item.id || "dummy-id-123"), 
-          name: item.name || "E-Cart Showcase Item",
+          productId: String(item._id || item.id || "dummy-id-123"),
+          name: item.name || "Unknown Item",
           quantity: Number(item.quantity || 1),
           price: Number(item.price || 0)
         })),

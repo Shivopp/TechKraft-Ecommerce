@@ -4,6 +4,7 @@ import ProductsPage from './components/ProductsPage';
 import Cart from './components/Cart';
 import Login from './components/Login'; 
 import Checkout from './components/Checkout';
+import MyOrders from './components/MyOrders';
 import AdminLogin from './components/AdminLogin'; // Cleaned up import reference
 import AdminLayout from './components/admin/AdminLayout';
 import Dashboard from './components/admin/Dashboard';
@@ -25,6 +26,7 @@ export default function App() {
               <Route path="/products" element={<ProductsPage />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/my-orders" element={<MyOrders />} />
               <Route path="/login" element={<Login />} /> 
               
               

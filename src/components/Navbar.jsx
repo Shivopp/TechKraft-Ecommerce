@@ -74,6 +74,13 @@ export default function Navbar() {
                   </Link>
                 )}
 
+                <Link
+                  to="/my-orders"
+                  className="hidden sm:inline-flex text-xs font-semibold text-gray-600 hover:text-purple-600 px-3 py-2 rounded-xl border border-gray-200 hover:border-purple-200 hover:bg-purple-50 transition"
+                >
+                  My Orders
+                </Link>
+
                 <button
                   onClick={logout}
                   className="text-xs font-semibold text-gray-500 hover:text-rose-600 px-3 py-2 rounded-xl hover:bg-rose-50 transition"

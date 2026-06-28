@@ -55,4 +55,14 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Get orders by user email
+router.get('/myorders/:email', async (req, res) => {
+  try {
+    const orders = await Order.find({ email: req.params.email }).sort({ date: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
