@@ -1,5 +1,6 @@
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -8,14 +9,15 @@ export default function Cart() {
   const { cartItems, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleProceedToCheckout = () => {
     if (cartItems.length === 0) {
-      alert("Add some items to your cart first!");
+      toast.warning("Add some items to your cart first!");
       return;
     }
     if (!user) {
-      alert("Please sign in to your account before placing an order! 🛒");
+      toast.info("Please sign in to your account before placing an order! 🛒");
       navigate('/login');
       return;
     }

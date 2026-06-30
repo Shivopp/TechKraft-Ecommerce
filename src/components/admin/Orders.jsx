@@ -6,6 +6,7 @@ export default function Orders() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const statusOptions = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
 
@@ -75,10 +76,13 @@ export default function Orders() {
     }
   };
 
-  const handleDelete = async (orderId) => {
-    const confirmed = window.confirm("Are you sure you want to permanently delete this order record?");
-    if (!confirmed) return;
-    
+  const handleDelete = (orderId) => {
+    setConfirmDeleteId(orderId);
+  };
+
+  const confirmDelete = async () => {
+    const orderId = confirmDeleteId;
+    setConfirmDeleteId(null);
     await deleteOrder(orderId);
     if (selectedOrder?._id === orderId) setSelectedOrder(null);
   };
@@ -366,6 +370,43 @@ export default function Orders() {
           </div>
         )}
       </div>
+
+      {/* Delete confirmation modal */}
+      {confirmDeleteId && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 animate-modal-in">
+            <div className="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-2xl mx-auto mb-4">
+              🗑️
+            </div>
+            <h3 className="text-base font-bold text-gray-900 text-center mb-1.5">Delete this order?</h3>
+            <p className="text-sm text-gray-500 text-center mb-6">
+              This will permanently remove order <span className="font-semibold text-gray-700">#{confirmDeleteId?.slice(-8)?.toUpperCase()}</span> from the database. This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="flex-1 border border-gray-200 text-gray-600 hover:bg-gray-50 py-2.5 rounded-xl font-semibold text-sm transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl font-semibold text-sm transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <style>{`
+            @keyframes modal-in {
+              from { opacity: 0; transform: scale(0.95) translateY(8px); }
+              to   { opacity: 1; transform: scale(1) translateY(0); }
+            }
+            .animate-modal-in { animation: modal-in 0.18s ease-out; }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 }

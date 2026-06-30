@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleAdminLogin = async (e) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ export default function AdminLogin() {
       if (savedUser?.role === 'admin') {
         navigate('/admin');
       } else {
-        alert('❌ Access denied. This account does not have admin privileges.');
+        toast.error('Access denied. This account does not have admin privileges.');
       }
     }
   };

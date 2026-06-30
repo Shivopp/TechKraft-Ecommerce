@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAdmin } from '../../context/AdminContext';
+import { useToast } from '../../context/ToastContext';
 
 export default function Products() {
   const { products, addProduct, deleteProduct, updateProduct } = useAdmin();
+  const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   // 1. This tracks WHICH product you want to edit. If it's null, it means we are adding a new product!
@@ -43,7 +45,7 @@ export default function Products() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.price || !formData.stock) return alert("Required fields missing");
+    if (!formData.name || !formData.price || !formData.stock) return toast.warning("Please fill in all required fields");
 
     const imgUrl = formData.image.trim() || "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=150";
 

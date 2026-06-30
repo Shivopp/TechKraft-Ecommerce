@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { fireToast } from './ToastContext';
 
 const AdminContext = createContext();
 
@@ -81,9 +82,10 @@ export function AdminProvider({ children }) {
         image: newProd.image
       });
       setProducts((prev) => [...prev, response.data]);
+      fireToast("Product added successfully!", "success");
     } catch (error) {
       console.error("Error adding product to database:", error.message);
-      alert("Failed to save product to database.");
+      fireToast("Failed to save product to database.", "error");
     }
   };
 
@@ -99,9 +101,10 @@ export function AdminProvider({ children }) {
       setProducts((prev) =>
         prev.map((product) => (product._id === id ? response.data : product))
       );
+      fireToast("Product updated successfully!", "success");
     } catch (error) {
       console.error("Error updating product in database:", error.message);
-      alert("Failed to save product updates.");
+      fireToast("Failed to save product updates.", "error");
     }
   };
 
@@ -109,9 +112,10 @@ export function AdminProvider({ children }) {
     try {
       await axios.delete(`${API_URL}/${id}`);
       setProducts((prev) => prev.filter(p => p._id !== id));
+      fireToast("Product deleted.", "success");
     } catch (error) {
       console.error("Error deleting product:", error.message);
-      alert("Failed to delete product.");
+      fireToast("Failed to delete product.", "error");
     }
   };
 
@@ -124,22 +128,21 @@ export function AdminProvider({ children }) {
       setRecentOrders((prev) =>
         prev.map((order) => (order._id === orderId ? response.data : order))
       );
+      fireToast(`Order status updated to "${newStatus}"`, "success");
     } catch (error) {
       console.error("Error updating order status:", error.message);
-      alert("Failed to update order status.");
+      fireToast("Failed to update order status.", "error");
     }
   };
 
   const deleteOrder = async (orderId) => {
-    if (!window.confirm("Are you sure you want to permanently delete this order?")) return;
-    
     try {
       await axios.delete(`${ORDERS_API_URL}/${orderId}`);
       setRecentOrders((prev) => prev.filter(order => order._id !== orderId));
-      alert("Order deleted successfully!");
+      fireToast("Order deleted successfully!", "success");
     } catch (error) {
       console.error("Error deleting order:", error.message);
-      alert("Failed to delete the order.");
+      fireToast("Failed to delete the order.", "error");
     }
   };
 
